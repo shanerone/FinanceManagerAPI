@@ -24,3 +24,8 @@ async def items_add(item: Annotated[SItemAdd, Depends()]) -> SItemId:
 async def items_get() -> list[SItem]:
     items = await ItemRepository.find_all()
     return items
+
+@router.delete("")
+async def items_del(itemd_id: int) -> SItemId:
+    await ItemRepository.delete_one(itemd_id)
+    return {"ok": True}

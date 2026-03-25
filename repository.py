@@ -25,3 +25,12 @@ class ItemRepository:
             item_models = result.scalars().all()
             item_schemas = [SItem.model_validate(item_model) for item_model in item_models]
             return item_schemas
+
+    @classmethod
+    async def delete_one(cls):
+        async with new_session() as session:
+            item = ItemORM()
+            session.delete(item)
+            await session.flush()
+            await session.commit()
+            return item.id
