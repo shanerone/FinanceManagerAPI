@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
 from database import ItemORM
-from schemas import SItemAdd
+from schemas import SItemAdd, SItem
 from database import new_session
 
 
@@ -18,9 +18,10 @@ class ItemRepository:
             return item.id
 
     @classmethod
-    async def find_all(cls):
+    async def find_all(cls) -> list[SItem]:
         async with new_session() as session:
             query = select(ItemORM)
             result  = await session.execute(query)
             item_models = result.scalars().all()
-            return item_models
+            item_schemas = [SItem.model_validate(item_model) for item_model in item_models]
+            return item_schemas
