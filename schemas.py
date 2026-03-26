@@ -3,16 +3,18 @@ from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict
 
 
-class SItemAdd(BaseModel):
-    name: str = Field(min_length=1)
+class STransactionAdd(BaseModel):
+    amount: float = Field(ge = 1)
     description: Optional[str] = None
-    price: float = Field(ge = 1)
-    model_config = ConfigDict(from_attributes=True)
+    type: str
+    category_id: Optional[int] = None
+    user_id: int
+    date: Optional[str] = None
 
-class SItem(SItemAdd):
+class STransaction(STransactionAdd):
     id: int
     model_config = ConfigDict(from_attributes=True)
 
-class SItemId(BaseModel):
+class STransactionId(BaseModel):
     ok: bool = True
-    item_id: int
+    transaction_id: int

@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from database import create_tables, delete_tables
-from router import router as item_router
+from router import router as transaction_router
 
 
 @asynccontextmanager
@@ -17,6 +17,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title = "Personal Finance Manager API", lifespan=lifespan)
 
-app.include_router(item_router)
+app.include_router(transaction_router)
 
 
