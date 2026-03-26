@@ -1,7 +1,8 @@
 from sqlalchemy import select
+from typing import Optional
 
 from database import TransactionORM
-from schemas import STransactionAdd, STransaction
+from schemas import STransactionAdd, STransaction, STransactionUpdate
 from database import new_session
 
 
@@ -28,8 +29,21 @@ class TransactionRepository:
 
     @classmethod
     async def delete_one(cls, transaction_id: int):
-        transaction = await session.get(TransactionORM, transaction_id)
-        if transaction:
-            session.delete(transaction)                           
-            await session.commit()
-            return transaction_id
+        async with new_session() as session:
+            transaction = await session.get(TransactionORM, transaction_id)
+            if transaction:
+                session.delete(transaction)                           
+                await session.commit()
+                return transaction_id
+
+    @classmethod
+    async def update_one(cls, transaction_id: int, transaction_data: STransactionUpdate) -> Optional[STransaction]:
+        async with new_session() as session:
+            transaction = await session.get(TransactionORM, transaction_id)
+            if transaction:
+                update_data = transaction_data.model_dump(exclude_unset=True)
+                for field, value in update_data.items():
+                    setattr(transaction, field, value)
+                await session.commit()
+                await session.refresh(transaction)
+                return STransaction.model_validate(transaction)

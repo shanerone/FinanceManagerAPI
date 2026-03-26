@@ -36,7 +36,7 @@ class TransactionORM(Model):
     amount: Mapped[float]
     description: Mapped[Optional[str]]
     type: Mapped[str] = mapped_column(String(10))
-    date: Mapped[date] = mapped_column(DateTime, default=datetime.utcnow)
+    date: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 async def create_tables():
     async with engine.begin() as conn:
